@@ -5,10 +5,10 @@ import os
 import warnings
 warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title="Superstore!!!", page_icon=":bar_chart:",layout="wide")
+st.set_page_config(page_title="Super Market", page_icon=":chart_with_upwards_trend:",layout="wide")
 
-st.title(" :bar_chart: Sample SuperStore EDA")
-st.markdown('<style>div.block-container{padding-top:1rem;}</style>',unsafe_allow_html=True)
+st.title(" :chart_with_upwards_trend: Dashboard for Super Market")
+st.markdown('<style>div.block-container{padding-top:1 rem;}</style>',unsafe_allow_html=True)
 
 fl = st.file_uploader(":file_folder: Upload a file",type=(["csv","txt","xlsx","xls"]))
 if fl is not None:
@@ -16,7 +16,7 @@ if fl is not None:
     st.write(filename)
     df = pd.read_csv(filename, encoding = "ISO-8859-1")
 else:
-    os.chdir(r"C:\Users\AEPAC\Desktop\Streamlit")
+    os.chdir(r"C:\Users\Asus\OneDrive\Documents\7th sem\Data Mining\StreamlitPractice")
     df = pd.read_csv("Superstore.csv", encoding = "ISO-8859-1")
 
 col1, col2 = st.columns((2))
