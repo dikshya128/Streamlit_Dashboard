@@ -2,20 +2,12 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import os
-import warnings
-warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title="Super Market", page_icon=":chart_with_upwards_trend:",layout="wide")
+st.set_page_config(page_title="Superstore", page_icon=":chart_with_upwards_trend:",layout="wide")
 
-st.title(" :chart_with_upwards_trend: Dashboard for Super Market")
+st.title(" :chart_with_upwards_trend: Dashboard for Superstore")
 st.markdown('<style>div.block-container{padding-top:15px;}</style>',unsafe_allow_html=True)
 
-# fl = st.file_uploader(":file_folder: Upload a file",type=(["csv","txt","xlsx","xls"]))
-# if fl is not None:
-#     filename = fl.name
-#     st.write(filename)
-#     df = pd.read_csv(filename, encoding = "ISO-8859-1")
-# else:
 os.chdir(r"C:\Users\Asus\OneDrive\Documents\7th sem\Data Mining\StreamlitPractice")
 df = pd.read_csv("Sample-Superstore.csv", encoding = "ISO-8859-1")
 
@@ -36,7 +28,7 @@ df = df[(df["Order Date"] >= date1) & (df["Order Date"] <= date2)].copy()
 
 st.sidebar.header("Choose your filter: ")
 # For Region
-region = st.sidebar.multiselect("Pick your Region", df["Region"].unique())
+region = st.sidebar.multiselect("Pick the Country", df["Region"].unique())
 if not region:
     df2 = df.copy()
 else:
@@ -73,49 +65,91 @@ else:
 
 
 category_df = filtered_df.groupby(by = ["Category"], as_index = False)["Sales"].sum()
-region_df = filtered_df.groupby(by = "Region", as_index = False)["Sales"].sum()
+region_df = filtered_df.groupby(by = ["Region"], as_index = False)["Sales"].sum()
 
 
 with col1:
-    st.subheader("Category wise Sales")
+    st.subheader("Sales by Category")
     fig = px.pie(filtered_df, values = "Sales", names = "Category", hole = 0.6)
     fig.update_traces(text = filtered_df["Category"], textposition = "inside",marker=dict(colors=['#EC6B56', '#FED60A', '#47B39C']))
+    fig.update_layout(showlegend=True,legend=dict(title='Category', orientation='v', x=1.0, y=0))
     st.plotly_chart(fig,use_container_width=True)
-
-with col2:
-    st.subheader("Region wise Sales")
-    fig = px.pie(filtered_df, values = "Sales", names = "Region", hole = 0.6)
-    fig.update_traces(text = filtered_df["Region"], textposition = "inside",marker=dict(colors=['#EC6B56', '#FED60A', '#47B39C','#1F75FE']))
-    st.plotly_chart(fig,use_container_width=True)
-
-cl1, cl2 = st.columns((2))
-with cl1:
-    with st.expander("View Category Data"):
+    with st.expander("View Sales by Category Data"):
         st.write(category_df.style.background_gradient(cmap="Blues"))
         csv = category_df.to_csv(index = False).encode('utf-8')
         st.download_button("Download Data", data = csv, file_name = "Category.csv", mime = "text/csv",
                             help = 'Click here to download the data as a CSV file')
 
-with cl2:
-    with st.expander("View Region Data"):
+with col2:
+    st.subheader("Sales by Country")
+    fig = px.pie(filtered_df, values = "Sales", names = "Region", hole = 0.6)
+    fig.update_traces(text = filtered_df["Region"], textposition = "inside",marker=dict(colors=['#EC6B56', '#FED60A', '#47B39C','#1F75FE']))
+    fig.update_layout(showlegend=True,legend=dict(title='Country', orientation='v', x=1.1, y=0))
+    st.plotly_chart(fig,use_container_width=True)
+    with st.expander("View Sales by Country Data"):
         st.write(region_df.style.background_gradient(cmap="Blues"))
         csv = region_df.to_csv(index = False).encode('utf-8')
-        st.download_button("Download Data", data = csv, file_name = "Region.csv", mime = "text/csv",
+        st.download_button("Download Data", data = csv, file_name = "Country.csv", mime = "text/csv",
                         help = 'Click here to download the data as a CSV file')
 
+
+category_pf = filtered_df.groupby(by = ["Category"], as_index = False)["Profit"].sum()
+region_pf = filtered_df.groupby(by = "Region", as_index = False)["Profit"].sum()
+
+
+with col1:
+    st.subheader("Profit by Category")
+    fig2 = px.pie(filtered_df, values = "Profit", names = "Category", hole = 0.6)
+    fig2.update_traces(text = filtered_df["Category"], textposition = "inside",marker=dict(colors=['#EC6B56', '#FED60A', '#47B39C']))
+    fig2.update_layout(showlegend=True,legend=dict(title='Category', orientation='v', x=1.0, y=0))
+    st.plotly_chart(fig2,use_container_width=True)
+
+with col2:
+    st.subheader("Profit by Country")
+    fig2 = px.pie(filtered_df, values = "Profit", names = "Region", hole = 0.6)
+    fig2.update_traces(text = filtered_df["Region"], textposition = "inside",marker=dict(colors=['#EC6B56', '#FED60A', '#47B39C','#1F75FE']))
+    fig2.update_layout(showlegend=True,legend=dict(title='Country', orientation='v', x=1.1, y=0))
+    st.plotly_chart(fig2,use_container_width=True)
+
+c1, c2 = st.columns(2)
+with c1:
+    with st.expander("View Profit by Category Data"):
+        st.write(category_pf.style.background_gradient(cmap="Blues"))
+        csv = category_pf.to_csv(index = False).encode('utf-8')
+        st.download_button("Download", data = csv, file_name = "Category.csv", mime = "text/csv",
+                            help = 'Click here to download the data as a CSV file')
+
+with c2:
+    with st.expander("View Profit by Country Data"):
+        st.write(region_pf.style.background_gradient(cmap="Blues"))
+        csv = region_pf.to_csv(index = False).encode('utf-8')
+        st.download_button("Download", data = csv, file_name = "Country.csv", mime = "text/csv",
+                        help = 'Click here to download the data as a CSV file')
+
+
+
 Subcategory_df = filtered_df.groupby(by = ["Sub-Category"], as_index = False)["Sales"].sum()
-st.subheader("Sub-Category wise Sales") 
+st.subheader("Sales by Sub-Category") 
 fig = px.bar(Subcategory_df, x = "Sub-Category", y = "Sales", text = ['${:,.2f}'.format(x) for x in Subcategory_df["Sales"]], 
                  template = "seaborn") 
 fig.update_traces(marker_color='#74BBFB')
 st.plotly_chart(fig,use_container_width=True, height = 200)
 
-with st.expander("View Sub-Category Data"):
+with st.expander("View Sales by Sub-Category Data"):
     st.write(Subcategory_df.style.background_gradient(cmap="Blues"))
     csv = Subcategory_df.to_csv(index = False).encode('utf-8')
     st.download_button("Download Data", data = csv, file_name = "Sub-Category.csv", mime = "text/csv",
                             help = 'Click here to download the data as a CSV file')
 
+
+# Create a tree based on Region, category, sub-Category
+st.subheader("Hierarchical view of Sales")
+fig3 = px.treemap(filtered_df, path = ["Region","Category","Sub-Category"], values = "Sales",hover_data = ["Sales"],
+                  color = "Sub-Category")
+fig3.update_layout(width = 800, height = 650)
+st.plotly_chart(fig3, use_container_width=True)
+
+# Time series
 filtered_df["month_year"] = filtered_df["Order Date"].dt.to_period("M")
 st.subheader('Time Series Analysis')
 
@@ -128,24 +162,18 @@ st.plotly_chart(fig2,use_container_width=True)
 with st.expander("View Data of TimeSeries:"):
     st.write(linechart.style.background_gradient(cmap="Blues"))
     csv = linechart.to_csv(index=False).encode("utf-8")
-    st.download_button('Download Data', data = csv, file_name = "TimeSeries.csv", mime ='text/csv')
-
-# Create a tree based on Region, category, sub-Category
-st.subheader("Hierarchical view of Sales using TreeMap")
-fig3 = px.treemap(filtered_df, path = ["Region","Category","Sub-Category"], values = "Sales",hover_data = ["Sales"],
-                  color = "Sub-Category")
-fig3.update_layout(width = 800, height = 650)
-st.plotly_chart(fig3, use_container_width=True)
+    st.download_button('Download Data', data = csv, file_name = "TimeSeries.csv", mime ='text/csv', 
+                       help = 'Click here to download the data as a CSV file')
 
 chart1, chart2 = st.columns((2))
 with chart1:
-    st.subheader('Segment wise Sales')
-    fig = px.pie(filtered_df, values = "Sales", names = "Segment", template = "plotly_dark")
+    st.subheader('Sales by Segment')
+    fig = px.pie(filtered_df, values = "Sales", names = "Segment", template = "plotly_dark", hole=0.6)
     fig.update_traces(text = filtered_df["Segment"], textposition = "inside")
     st.plotly_chart(fig,use_container_width=True)
 
 with chart2:
-    st.subheader('Category wise Sales')
+    st.subheader('Profit by ')
     fig = px.pie(filtered_df, values = "Sales", names = "Category", template = "gridon")
     fig.update_traces(text = filtered_df["Category"], textposition = "inside")
     st.plotly_chart(fig,use_container_width=True)
