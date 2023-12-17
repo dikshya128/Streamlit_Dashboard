@@ -107,7 +107,7 @@ with col1:
 with col2:
     st.subheader("Profit by Country")
     fig2 = px.pie(filtered_df, values = "Profit", names = "Region", hole = 0.6)
-    fig2.update_traces(text = filtered_df["Region"], textposition = "inside",marker=dict(colors=['#EC6B56', '#FED60A', '#47B39C','#1F75FE']))
+    fig2.update_traces(text = filtered_df["Region"], textposition = "inside", marker=dict(colors=['#EC6B56', '#FED60A', '#47B39C','#1F75FE']))
     fig2.update_layout(showlegend=True,legend=dict(title='Country', orientation='v', x=1.1, y=0))
     st.plotly_chart(fig2,use_container_width=True)
 
@@ -141,13 +141,31 @@ with st.expander("View Sales by Sub-Category Data"):
     st.download_button("Download Data", data = csv, file_name = "Sub-Category.csv", mime = "text/csv",
                             help = 'Click here to download the data as a CSV file')
 
+Subcategory_df = filtered_df.groupby(by = ["Sub-Category"], as_index = False)["Profit"].sum()
+st.subheader("Profit by Sub-Category") 
+fig = px.bar(Subcategory_df, x = "Sub-Category", y = "Profit", text = ['${:,.2f}'.format(x) for x in Subcategory_df["Profit"]], 
+                 template = "seaborn") 
+fig.update_traces(marker_color='#74BBFB')
+st.plotly_chart(fig,use_container_width=True, height = 200)
+
+with st.expander("View Profit by Sub-Category Data"):
+    st.write(Subcategory_df.style.background_gradient(cmap="Blues"))
+    csv = Subcategory_df.to_csv(index = False).encode('utf-8')
+    st.download_button("Download", data = csv, file_name = "Sub-Category.csv", mime = "text/csv",
+                            help = 'Click here to download the data as a CSV file')
 
 # Create a tree based on Region, category, sub-Category
 st.subheader("Hierarchical view of Sales")
 fig3 = px.treemap(filtered_df, path = ["Region","Category","Sub-Category"], values = "Sales",hover_data = ["Sales"],
                   color = "Sub-Category")
-fig3.update_layout(width = 800, height = 650)
+fig3.update_layout( height = 700)
 st.plotly_chart(fig3, use_container_width=True)
+
+st.subheader("Hierarchical view of Profit")
+fig4 = px.treemap(filtered_df, path = ["Region","Category","Sub-Category"], values = "Profit",hover_data = ["Profit"],
+                  color = "Sub-Category")
+fig4.update_layout( height = 700)
+st.plotly_chart(fig4, use_container_width=True)
 
 # Time series
 filtered_df["month_year"] = filtered_df["Order Date"].dt.to_period("M")
