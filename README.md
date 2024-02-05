@@ -1,3 +1,3 @@
 # 'Data Visualization for Superstore Data'
 
-### Mini Project for Data Mining
+### Mini Project for Data Mining: Creating Dashboard 
