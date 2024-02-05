@@ -67,7 +67,6 @@ else:
 category_df = filtered_df.groupby(by = ["Category"], as_index = False)["Sales"].sum()
 region_df = filtered_df.groupby(by = ["Region"], as_index = False)["Sales"].sum()
 
-
 with col1:
     st.subheader("Sales by Category")
     fig = px.pie(filtered_df, values = "Sales", names = "Category",template = "plotly_dark", hole = 0.6)
