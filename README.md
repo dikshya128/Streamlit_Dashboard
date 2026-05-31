@@ -23,7 +23,7 @@ The application is designed to support data-driven decision making by allowing u
 
 Interactive sidebar filters allow users to drill down by:
 
-* Region
+* Country
 * State
 * City
 
@@ -34,7 +34,7 @@ Interactive sidebar filters allow users to drill down by:
 ### Sales Analysis
 
 * Sales by Category
-* Sales by Region
+* Sales by Country
 * Sales by Sub-Category
 * Sales Time-Series Trends
 
@@ -49,7 +49,7 @@ Interactive sidebar filters allow users to drill down by:
 
 * Treemap visualization showing:
 
-  * Region
+  * Country
   * Category
   * Sub-Category
 
@@ -113,7 +113,7 @@ This project demonstrates:
 
 ## 📄 Dataset
 
-The project uses the **Sample Superstore Dataset**, provided as part of the academic coursework for the BSc CS 4th Year Mini Project. It is a commonly used retail dataset for business analytics and visualization tasks.
+The project uses the **Sample Superstore Dataset**, provided as part of the academic coursework for the BSc CS 4th Year Mini Project.
 
 ---
 
