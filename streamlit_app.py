@@ -1,15 +1,15 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-import os
+from pathlib import Path
 
 st.set_page_config(page_title="Superstore", page_icon=":chart_with_upwards_trend:",layout="wide")
 
 st.title(" :chart_with_upwards_trend: Dashboard for Superstore")
 st.markdown('<style>div.block-container{padding-top:15px;}</style>',unsafe_allow_html=True)
 
-os.chdir(r"C:\Users\Asus\OneDrive\Documents\7th sem\Data Mining\StreamlitPractice")
-df = pd.read_csv("Sample-Superstore.csv", encoding = "ISO-8859-1")
+data_path = Path(__file__).resolve().parent
+df = pd.read_csv(data_path / "Sample-Superstore.csv", encoding="latin1")
 
 col1, col2 = st.columns((2)) #two columns for start date and end date
 df["Order Date"] = pd.to_datetime(df["Order Date"])
@@ -72,7 +72,7 @@ with col1:
     fig = px.pie(filtered_df, values = "Sales", names = "Category",template = "plotly_dark", hole = 0.6)
     fig.update_traces(text = filtered_df["Category"], textposition = "inside")
     fig.update_layout(showlegend=True,legend=dict(title='Category', orientation='v', x=1.0, y=0))
-    st.plotly_chart(fig,use_container_width=True)
+    st.plotly_chart(fig, width="stretch", key="sales_category")
     with st.expander("View Sales by Category Data"):
         st.write(category_df.style.background_gradient(cmap="Blues"))
         csv = category_df.to_csv(index = False).encode('utf-8')
@@ -84,7 +84,7 @@ with col2:
     fig = px.pie(filtered_df, values = "Sales", names = "Region",template = "plotly_dark", hole = 0.6)
     fig.update_traces(text = filtered_df["Region"], textposition = "inside")
     fig.update_layout(showlegend=True,legend=dict(title='Country', orientation='v', x=1.1, y=0))
-    st.plotly_chart(fig,use_container_width=True)
+    st.plotly_chart(fig, width="stretch", key="sales_country")
     with st.expander("View Sales by Country Data"):
         st.write(region_df.style.background_gradient(cmap="Blues"))
         csv = region_df.to_csv(index = False).encode('utf-8')
@@ -101,14 +101,14 @@ with col1:
     fig2 = px.pie(filtered_df, values = "Profit", names = "Category",template = "plotly_dark", hole = 0.6)
     fig2.update_traces(text = filtered_df["Category"], textposition = "inside")
     fig2.update_layout(showlegend=True,legend=dict(title='Category', orientation='v', x=1.0, y=0))
-    st.plotly_chart(fig2,use_container_width=True)
+    st.plotly_chart(fig2, width="stretch", key="profit_category")
 
 with col2:
     st.subheader("Profit by Country")
     fig2 = px.pie(filtered_df, values = "Profit", names = "Region",template = "plotly_dark", hole = 0.6)
     fig2.update_traces(text = filtered_df["Region"], textposition = "inside")
     fig2.update_layout(showlegend=True,legend=dict(title='Country', orientation='v', x=1.1, y=0))
-    st.plotly_chart(fig2,use_container_width=True)
+    st.plotly_chart(fig2, width="stretch", key="profit_country")
 
 c1, c2 = st.columns(2)
 with c1:
@@ -132,7 +132,7 @@ st.subheader("Sales by Sub-Category")
 fig = px.bar(Subcategory_df, x = "Sub-Category", y = "Sales", text = ['${:,.2f}'.format(x) for x in Subcategory_df["Sales"]], 
                  template = "seaborn") 
 fig.update_traces(marker_color='#74BBFB')
-st.plotly_chart(fig,use_container_width=True, height = 200)
+st.plotly_chart(fig, width="stretch", height = 200 , key="sales_subcategory")
 
 with st.expander("View Sales by Sub-Category Data"):
     st.write(Subcategory_df.style.background_gradient(cmap="Blues"))
@@ -145,7 +145,7 @@ st.subheader("Profit by Sub-Category")
 fig = px.bar(Subcategory_df, x = "Sub-Category", y = "Profit", text = ['${:,.2f}'.format(x) for x in Subcategory_df["Profit"]], 
                  template = "seaborn") 
 fig.update_traces(marker_color='#74BBFB')
-st.plotly_chart(fig,use_container_width=True, height = 200)
+st.plotly_chart(fig, width="stretch", height = 200 , key="profit_subcategory")
 
 with st.expander("View Profit by Sub-Category Data"):
     st.write(Subcategory_df.style.background_gradient(cmap="Blues"))
@@ -158,7 +158,7 @@ st.subheader("Hierarchical view of Sales")
 fig3 = px.treemap(filtered_df, path = ["Region","Category","Sub-Category"], values = "Sales",hover_data = ["Sales"],
                   color = "Sub-Category")
 fig3.update_layout( height = 700)
-st.plotly_chart(fig3, use_container_width=True)
+st.plotly_chart(fig3, width="stretch", key="sales_hierarchical")
 
 # Time series
 filtered_df["month_year"] = filtered_df["Order Date"].dt.to_period("M")
@@ -168,7 +168,7 @@ linechart = pd.DataFrame(filtered_df.groupby(filtered_df["month_year"].dt.strfti
 linechart['month_year'] = pd.to_datetime(linechart['month_year'])
 linechart = linechart.sort_values('month_year')
 fig2 = px.line(linechart, x = "month_year", y="Sales", labels = {"Sales": "Sales", "month_year":"Time"},height=500, width = 1000,template="gridon")
-st.plotly_chart(fig2,use_container_width=True)
+st.plotly_chart(fig2, width="stretch", key="time_series_sales")
 
 with st.expander("View Data of TimeSeries:"):
     st.write(linechart.style.background_gradient(cmap="Blues"))
@@ -183,7 +183,7 @@ linechart = pd.DataFrame(filtered_df.groupby(filtered_df["month_year"].dt.strfti
 linechart['month_year'] = pd.to_datetime(linechart['month_year'])
 linechart = linechart.sort_values('month_year')
 fig2 = px.line(linechart, x = "month_year", y="Profit", labels = {"Sales": "Profit", "month_year":"Time"},height=500, width = 1000,template="gridon")
-st.plotly_chart(fig2,use_container_width=True)
+st.plotly_chart(fig2, width="stretch", key="time_series_profit")
 
 chart1, chart2 = st.columns((2))
 
@@ -191,26 +191,42 @@ with chart1:
     st.subheader('Sales by Segment')
     fig = px.pie(filtered_df, values = "Sales", names = "Segment", template = "plotly_dark", hole=0.6)
     fig.update_traces(text = filtered_df["Segment"], textposition = "inside")
-    st.plotly_chart(fig,use_container_width=True)
+    st.plotly_chart(fig, width="stretch", key="sales_segment")
 
 with chart2:
     st.subheader('Profit by Segment')
     fig = px.pie(filtered_df, values = "Profit", names = "Segment", template = "plotly_dark", hole=0.6)
     fig.update_traces(text = filtered_df["Segment"], textposition = "inside")
-    st.plotly_chart(fig,use_container_width=True)
+    st.plotly_chart(fig, width="stretch", key="profit_segment")
 
 # Create a scatter plot
 st.subheader('Relationship between Sales and Profit')
 data1 = px.scatter(filtered_df, x = "Sales", y = "Profit", size = "Quantity",trendline='ols')
-data1['layout'].update(xaxis = dict(title="Sales",titlefont=dict(size=19)),
-                       yaxis = dict(title = "Profit", titlefont = dict(size=19)))
-st.plotly_chart(data1,use_container_width=True)
+data1.update_layout(
+    xaxis=dict(
+        title=dict(text="Sales"),
+        tickfont=dict(size=19)
+    ),
+    yaxis=dict(
+        title=dict(text="Profit"),
+        tickfont=dict(size=19)
+    )
+)
+st.plotly_chart(data1, width="stretch")
 
 st.subheader('Relationship between Quantity and Discount')
 data1 = px.scatter(filtered_df, x = "Quantity", y = "Discount",trendline='ols')
-data1['layout'].update(xaxis = dict(title="Quantity",titlefont=dict(size=19)),
-                       yaxis = dict(title = "Discount", titlefont = dict(size=19)))
-st.plotly_chart(data1,use_container_width=True)
+data1.update_layout(
+    xaxis=dict(
+        title=dict(text="Quantity"),
+        tickfont=dict(size=19)
+    ),
+    yaxis=dict(
+        title=dict(text="Discount"),
+        tickfont=dict(size=19)
+    )
+)
+st.plotly_chart(data1, width="stretch", key="quantity_discount")
 
 # Download orginal DataSet
 col1, col2 = st.columns([1,3])
